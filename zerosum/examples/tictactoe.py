@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from copy import deepcopy
 from itertools import chain
 
@@ -5,11 +6,10 @@ import zerosum
 
 
 X, O = 'X', 'O'
-BLANK = _ = ' '
-DRAW = 'Draw'
+BLANK = ' '
 
 
-class TicTacToe(zerosum.Board):
+class Board(zerosum.base.Board):
     #: An empty board
     EMPTY = [
         [BLANK, BLANK, BLANK],
@@ -56,13 +56,11 @@ class TicTacToe(zerosum.Board):
     def get_available_moves(self):
         return list(self.blanks)
 
-    def get_outcome(self):
-        outcome = None
+    def get_winner(self):
         for line in self.lines:
             uniques = tuple(set(line))
             if len(uniques) == 1 and BLANK not in uniques:
-                return uniques[0]  # we have a winner
-        return None if bool(tuple(self.blanks)) else DRAW
+                return uniques[0]
 
     def make_move(self, move):
         row, col = move
@@ -80,7 +78,7 @@ class TicTacToe(zerosum.Board):
         return ' {}'.format('\n-----------\n '.join(rows))
 
 
-class AllOrNothing(zerosum.Evaluator):
+class Evaluator(zerosum.base.Evaluator):
     def __init__(self, prize=10):
         self.prize = prize
 
