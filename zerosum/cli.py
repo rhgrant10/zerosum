@@ -21,22 +21,23 @@ def main(max_depth):
             board = zerosum.examples.tictactoe.Board()
             board = board.make_move([row, col])
             while not board.outcome:
-                print()
-                print(board)
-                print()
                 move = solver.get_best_move(board)
-                print('{} moves {}'.format(board.player, move))
+                print_board(board, '{} moves {}'.format(board.player, move))
                 board = board.make_move(move)
-            print()
-            print(board)
-            print('Result: {}'.format(board.outcome))
+
+            print_board(board, 'Result: {}'.format(board.outcome))
             results[str(board.outcome)] += 1
 
-    print()
-    print('{:18s} {:s}'.format('Result', 'Times'))
+    print('\n{:18s} {:s}'.format('Result', 'Times'))
     print('~' * 24)
     for result, count in results.most_common():
         print('{:18s} {:d}'.format(result, count))
+
+
+def print_board(board, message=None):
+    print(board)
+    if message:
+        print(message)
 
 
 if __name__ == "__main__":

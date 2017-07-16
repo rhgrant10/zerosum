@@ -1,4 +1,4 @@
 from .board import Board
-from .evaluator import Evaluator
+from .evaluator import Evaluator, Evaluation
 from .solver import Solver
-from .outcome import Outcome
+from .chooser import Chooser

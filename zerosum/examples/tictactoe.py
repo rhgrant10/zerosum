@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
-from copy import deepcopy
-from itertools import chain
+import copy
+import itertools
+import collections
 
 import zerosum
 
@@ -44,8 +45,8 @@ class Board(zerosum.base.Board):
 
     @property
     def lines(self):
-        yield from chain(self.rows, self.columns, self.diagonals)
-    
+        yield from itertools.chain(self.rows, self.columns, self.diagonals)
+
     @property
     def blanks(self):
         for r in range(3):
@@ -53,22 +54,13 @@ class Board(zerosum.base.Board):
                 if self.squares[r][c] == BLANK:
                     yield r, c
 
-    def get_available_moves(self):
-        return list(self.blanks)
-
-    def get_winner(self):
-        for line in self.lines:
-            uniques = tuple(set(line))
-            if len(uniques) == 1 and BLANK not in uniques:
-                return uniques[0]
-
     def make_move(self, move):
         row, col = move
         piece = self.squares[row][col]
         if piece != BLANK:
             raise ValueError('Square {!r} already contains {!r}'
                              .format(move, piece))
-        after_move = deepcopy(self.squares)
+        after_move = copy.deepcopy(self.squares)
         after_move[row][col] = self.player
         switched = tuple(reversed(self.players))
         return self.__class__(squares=after_move, players=switched)
@@ -79,15 +71,45 @@ class Board(zerosum.base.Board):
 
 
 class Evaluator(zerosum.base.Evaluator):
-    def __init__(self, prize=10):
-        self.prize = prize
+    def get_available_moves(self, board):
+        return list(board.blanks)
 
-    def score(self, board, depth=0):
-        outcome = board.outcome
-        if outcome == board.player:
-            score = self.prize + depth
-        elif outcome == board.opponent:
-            score = -self.prize - depth
-        else:
-            score = 0
+    def get_winner(self, board):
+        for line in board.lines:
+            uniques = tuple(set(line))
+            if len(uniques) == 1 and BLANK not in uniques:
+                return uniques[0]
+
+
+class TerminalEvaluator(Evaluator):
+    prize = 10
+
+    def __init__(self, prize=None):
+        super().__init__()
+        self.prize = prize or self.prize
+
+    def get_score(self, board, depth=0):
+        winner = self.get_winner(board)
+        if winner:
+            color = 1 if winner == board.player else -1
+            return color * (self.prize + depth)
+        return 0
+
+
+class SmartEvaluator(Evaluator):
+    points = {0: 0, 1: .1, 2: 1, 3: 10}
+
+    def __init__(self, points=None):
+        self.points = points or self.points
+
+    def get_score(self, board, depth=0):
+        score = 0
+        for line in board.lines:
+            pieces = collections.Counter(line)
+            if not pieces[board.opponent]:
+                count = pieces[board.player]
+                score += self.points[count] + depth
+            elif not pieces[board.player]:
+                count = pieces[board.opponent]
+                score -= self.points[count] + depth
         return score
