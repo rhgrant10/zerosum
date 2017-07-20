@@ -11,17 +11,14 @@ with open('README.rst') as readme_file:
 with open('HISTORY.rst') as history_file:
     history = history_file.read()
 
-requirements = [
-    'Click>=6.0',
-    # TODO: put package requirements here
-]
+with open('requirements.txt') as requirements_file:
+    requirements = requirements_file.read().splitlines()
+
+with open('requirements_dev.txt') as requirements_file:
+    dev_requirements = requirements_file.read().splitlines()
 
 setup_requirements = [
     # TODO(rhgrant10): put setup requirements (distutils extensions, etc.) here
-]
-
-test_requirements = [
-    # TODO: put package test requirements here
 ]
 
 setup(
@@ -57,6 +54,6 @@ setup(
         'Programming Language :: Python :: 3.5',
     ],
     test_suite='tests',
-    tests_require=test_requirements,
+    tests_require=dev_requirements,
     setup_requires=setup_requirements,
 )
