@@ -15,3 +15,22 @@ class Board(metaclass=abc.ABCMeta):
         :return: the board after the move has been made
         :rtype: `zerosum.Board`
         """
+
+    @abc.abstractmethod
+    def get_available_moves(self):
+        """Return all available moves on the board for the current player.
+
+        :return: all available moves
+        :rtype: list
+        """
+
+    @abc.abstractmethod
+    def get_winner(self):
+        """Return the winner, if any.
+
+        :return: the winner or ``None`` if there is no winner
+        """
+
+    @abc.abstractmethod
+    def is_game_over(self):
+        """"""

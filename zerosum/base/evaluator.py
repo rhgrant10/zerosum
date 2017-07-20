@@ -11,25 +11,10 @@ class Evaluator(metaclass=abc.ABCMeta):
         :return: an evaluation of the board
         :rtype: `zerosum.base.evaluations.Evaluator`
         """
-        winner = self.get_winner(board)
-        moves = self.get_available_moves(board)
+        winner = board.get_winner()
+        moves = board.get_available_moves()
         score = self.get_score(board)
         return Evaluation(winner=winner, moves=moves, score=score)
-
-    @abc.abstractmethod
-    def get_available_moves(self):
-        """Return all available moves on the board for the current player.
-
-        :return: all available moves
-        :rtype: list
-        """
-
-    @abc.abstractmethod
-    def get_winner(self):
-        """Return the winner, if any.
-
-        :return: the winner or ``None`` if there is no winner
-        """
 
     @abc.abstractmethod
     def get_score(self, board):
@@ -50,7 +35,7 @@ class Evaluation:
 
     @property
     def is_final(self):
-        return not bool(self.moves)
+        return self.winner or not bool(self.moves)
 
     @property
     def is_win(self):
