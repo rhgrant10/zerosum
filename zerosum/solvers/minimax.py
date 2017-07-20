@@ -11,8 +11,8 @@ class Minimax(zerosum.base.Solver):
                          max_depth=max_depth)
 
     def get_best_move(self, board):
-        __, best_move = self._maxi(board)
-        return best_move
+        __, move = self._maxi(board)
+        return move
 
     def _maxi(self, board, depth=0):
         # maximize the score
@@ -33,7 +33,7 @@ class Minimax(zerosum.base.Solver):
         # minimize the score
         evaluation = self.evaluator.evaluate(board)
         if evaluation.is_final or self.is_at_max_depth(depth):
-            return evaluation.score, None
+            return -evaluation.score, None
 
         scores = []
         for move in evaluation.moves:
