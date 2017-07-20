@@ -65,23 +65,24 @@ class Board(zerosum.base.Board):
         switched = tuple(reversed(self.players))
         return self.__class__(squares=after_move, players=switched)
 
+    def get_available_moves(self):
+        return list(self.blanks) if not self.get_winner() else []
+
+    def get_winner(self):
+        for line in self.lines:
+            uniques = tuple(set(line))
+            if len(uniques) == 1 and BLANK not in uniques:
+                return uniques[0]
+
+    def is_game_over(self):
+        return self.get_winner() or not self.get_available_moves()
+
     def __str__(self):
         rows = (' | '.join(row) for row in self.rows)
         return ' {}'.format('\n-----------\n '.join(rows))
 
 
-class Evaluator(zerosum.base.Evaluator):
-    def get_available_moves(self, board):
-        return list(board.blanks)
-
-    def get_winner(self, board):
-        for line in board.lines:
-            uniques = tuple(set(line))
-            if len(uniques) == 1 and BLANK not in uniques:
-                return uniques[0]
-
-
-class TerminalEvaluator(Evaluator):
+class TerminalEvaluator(zerosum.base.Evaluator):
     prize = 10
 
     def __init__(self, prize=None):
@@ -89,15 +90,15 @@ class TerminalEvaluator(Evaluator):
         self.prize = prize or self.prize
 
     def get_score(self, board, depth=0):
-        winner = self.get_winner(board)
+        winner = board.get_winner()
         if winner:
             color = 1 if winner == board.player else -1
             return color * (self.prize + depth)
-        return 0
+        return depth
 
 
-class SmartEvaluator(Evaluator):
-    points = {0: 0, 1: .1, 2: 1, 3: 10}
+class SmartEvaluator(zerosum.base.Evaluator):
+    points = {0: 0, 1: 10, 2: 100, 3: 1000}
 
     def __init__(self, points=None):
         self.points = points or self.points
