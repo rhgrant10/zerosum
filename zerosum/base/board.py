@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+"""Representation of a game board."""
 import abc
 
 
