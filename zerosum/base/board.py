@@ -6,14 +6,14 @@ class Board(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def make_move(self, move):
-        """Make a move and return the resulting ``zerosum.Board``.
+        """Make a move and return the resulting :class:`~Board`.
 
         No changes are made to the board. Instead, a new copy of the board is
         returned.
 
         :param tuple move: the move to make
         :return: the board after the move has been made
-        :rtype: `zerosum.Board`
+        :rtype: :class:`~Board`
         """
 
     @abc.abstractmethod
@@ -29,8 +29,13 @@ class Board(metaclass=abc.ABCMeta):
         """Return the winner, if any.
 
         :return: the winner or ``None`` if there is no winner
+        :rtype: :class:`~zerosum.base.player.Player`
         """
 
     @abc.abstractmethod
     def is_game_over(self):
-        """"""
+        """Return ``True`` if the game is over.
+
+        :return: whether the game has ended
+        :rtype: bool
+        """
