@@ -9,8 +9,11 @@ from zerosum.base import Game
 
 
 @click.command()
-@click.option('-d', '--max-depth', type=int, default=10)
-def main(max_depth):
+@click.option('--max-depth', type=int, default=5, show_default=True,
+              help='maximum depth for the solver')
+@click.option('--smart/--simple', default=True, show_default=True,
+              help='which board evaluator to use')
+def main(max_depth, smart):
     """Console script for zerosum."""
 
     # Create the players
