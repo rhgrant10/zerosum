@@ -19,7 +19,10 @@ def main(max_depth, smart):
     # Create the players
     name = input("What's your name? ")
     human = tictactoe.HumanPlayer(name=name)
-    computer = tictactoe.SmartPlayer()
+    if smart:
+        computer = tictactoe.SmartPlayer(max_depth=max_depth)
+    else:
+        computer = tictactoe.SimplePlayer(max_depth=max_depth)
 
     # Figure out who's first
     answer = True
