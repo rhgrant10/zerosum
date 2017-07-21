@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from .board import Board
 from .evaluator import Evaluator, Evaluation
 from .solver import Solver
