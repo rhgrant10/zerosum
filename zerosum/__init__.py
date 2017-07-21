@@ -10,3 +10,4 @@ __version__ = '0.1.0'
 from . import base
 from . import examples
 from . import solvers
+from . import exceptions

@@ -4,40 +4,40 @@ import collections
 
 import click
 
-import zerosum
+from zerosum.examples import tictactoe
+from zerosum.base import Game
 
 
 @click.command()
 @click.option('-d', '--max-depth', type=int, default=10)
 def main(max_depth):
     """Console script for zerosum."""
-    evaluator = zerosum.examples.tictactoe.Evaluator()
-    solver = zerosum.solvers.Minimax(evaluator, max_depth=max_depth)
 
-    results = collections.Counter()
-    for row in range(3):
-        for col in range(3):
-            print('Game {}'.format(row * 3 + col))
-            board = zerosum.examples.tictactoe.Board()
-            board = board.make_move([row, col])
-            while not board.outcome:
-                move = solver.get_best_move(board)
-                print_board(board, '{} moves {}'.format(board.player, move))
-                board = board.make_move(move)
+    # Create the players
+    name = input("What's your name? ")
+    human = tictactoe.HumanPlayer(name=name)
+    computer = tictactoe.SmartPlayer()
 
-            print_board(board, 'Result: {}'.format(board.outcome))
-            results[str(board.outcome)] += 1
+    # Figure out who's first
+    answer = True
+    while answer and answer not in ('y', 'yes', 'n', 'no'):
+        answer = input('(Yes/no) Do you want to be X? ')
 
-    print('\n{:18s} {:s}'.format('Result', 'Times'))
-    print('~' * 24)
-    for result, count in results.most_common():
-        print('{:18s} {:d}'.format(result, count))
+    if not answer or 'y' in answer:
+        players = human, computer
+    else:
+        players = computer, human
 
+    # Play the game
+    board = tictactoe.Board()
+    game = tictactoe.Game(players=players, board=board)
+    winner = game.play()
 
-def print_board(board, message=None):
-    print(board)
-    if message:
-        print(message)
+    # Report the result.
+    if winner == Game.DRAW:
+        print("It's a draw!")
+    elif winner:
+        print('{} wins!'.format(winner))
 
 
 if __name__ == "__main__":

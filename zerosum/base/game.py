@@ -2,6 +2,8 @@ import abc
 import itertools
 import collections
 
+from zerosum import exceptions
+
 
 class Game:
     DRAW = 'draw'
@@ -9,6 +11,7 @@ class Game:
     def __init__(self, players, board):
         self.players = collections.OrderedDict(zip(board.players, players))
         self.boards = [board]
+        self.player = None
 
     @property
     def board(self):
@@ -18,16 +21,40 @@ class Game:
         self.boards.append(board)
 
     def play(self):
-        introduction = '\n\t{} VS {}\n------------------------------------\n'
-        print(introduction.format(*self.players.values()))
+        self.play_intro()
         for player in itertools.cycle(self.players.values()):
+            self.player = player
+
+            # First handle game over scenario.
             if self.board.is_game_over():
                 winner = self.board.get_winner()
                 return self.players.get(winner, Game.DRAW)
-            print("It's {}'s turn. Go.".format(player))
-            self.board = player.take_turn(self.board)
-            self.display()
 
-    @abc.abstractmethod
-    def display(self):
-        print(self.board)
+            # Now let the player take their turn.
+            self.play_pre_turn()
+            board = None
+            while not board:
+                try:
+                    board = player.take_turn(self.board)
+                except exceptions.InvalidMove as e:
+                    self.play_invalid_move(e)
+                except exceptions.IQuitError as e:
+                    self.play_quit(e)
+                    return None
+            self.board = board
+            self.play_post_turn()
+
+    def play_invalid_move(self, e):
+        pass
+
+    def play_quit(self, e):
+        pass
+
+    def play_intro(self):
+        pass
+
+    def play_pre_turn(self):
+        pass
+
+    def play_post_turn(self):
+        pass

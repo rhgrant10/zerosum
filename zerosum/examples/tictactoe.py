@@ -2,6 +2,7 @@
 import copy
 import itertools
 import collections
+import re
 
 import zerosum
 
@@ -82,7 +83,7 @@ class Board(zerosum.base.Board):
         return ' {}'.format('\n-----------\n '.join(rows))
 
 
-class TerminalEvaluator(zerosum.base.Evaluator):
+class SimpleEvaluator(zerosum.base.Evaluator):
     prize = 10
 
     def __init__(self, prize=None):
@@ -114,3 +115,63 @@ class SmartEvaluator(zerosum.base.Evaluator):
                 count = pieces[board.opponent]
                 score -= self.points[count] + depth
         return score
+
+
+class HumanPlayer(zerosum.base.HumanPlayer):
+    move_re = re.compile(r'''^(?P<row>[012]).+(?P<column>[012])$''')
+    prompt = "What's your move? ('q' to quit) "
+
+    def __init__(self, name, move_re=None, prompt=None):
+        super().__init__(name=name)
+        self.move_re = move_re or self.move_re
+        self.prompt = prompt or self.prompt
+
+    def get_input(self):
+        return input(self.prompt)
+
+    def parse_move_input(self, response):
+        match = self.move_re.match(response)
+        if match:
+            row, column = match.group('row', 'column')
+            return int(row), int(column)
+        raise zerosum.exceptions.InvalidMove(player=self, move=response)
+
+    def is_quit(self, move):
+        return move == 'q'
+
+
+class AiPlayer(zerosum.base.AiPlayer):
+    def take_pre_turn(self, board):
+        print('Thinking...')
+
+
+class SimplePlayer(AiPlayer):
+    def __init__(self, max_depth=None):
+        evaluator = SimpleEvaluator()
+        solver = zerosum.solvers.Minimax(evaluator=evaluator, max_depth=max_depth)
+        super().__init__(solver=solver)
+
+
+class SmartPlayer(AiPlayer):
+    def __init__(self, max_depth=None):
+        evaluator = SmartEvaluator()
+        solver = zerosum.solvers.Minimax(evaluator=evaluator, max_depth=max_depth)
+        super().__init__(solver=solver)
+
+
+class Game(zerosum.base.Game):
+    def play_intro(self):
+        print('\n{0} {1} vs {2} {0}\n'.format('~' * 10, * self.players.values()))
+        print(self.board)
+
+    def play_pre_turn(self):
+        print("{}, it's your turn.".format(self.player))
+
+    def play_post_turn(self):
+        print(self.board)
+
+    def play_quit(self, e):
+        print('Player {} quits!'.format(e.player))
+
+    def play_invalid_move(self, e):
+        print('{!r} is an invalid move yo... try again.'.format(e.move))
