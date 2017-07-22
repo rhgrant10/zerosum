@@ -3,6 +3,7 @@ import abc
 
 
 class Evaluator(metaclass=abc.ABCMeta):
+
     def evaluate(self, board):
         """Return an evaluation of a board.
 
@@ -29,23 +30,34 @@ class Evaluator(metaclass=abc.ABCMeta):
 class Evaluation:
 
     def __init__(self, winner=None, moves=False, score=None):
+        """An evaluation of a board.
+
+        :param winner: the winning player
+        :type winner: :class:`~zerosum.base.player.Player`
+        :param list moves: the moves available on the board
+        :param float score: the current score of the board
+        """
         self.winner = winner
         self.score = score
         self.moves = moves
 
     @property
     def is_final(self):
+        """True if the game is over."""
         return self.winner or not bool(self.moves)
 
     @property
     def is_win(self):
+        """True if the game has a winner."""
         return bool(self.winner)
 
     @property
     def is_draw(self):
+        """True if the game is over but there is no winner."""
         return not self.is_win and self.is_final
 
     def __bool__(self):
+        """True if the game is over."""
         return self.is_final
 
     def __str__(self):
