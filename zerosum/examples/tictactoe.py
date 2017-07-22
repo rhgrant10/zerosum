@@ -179,26 +179,49 @@ class SmartEvaluator(zerosum.base.Evaluator):
 
 
 class HumanPlayer(zerosum.base.HumanPlayer):
-    move_re = re.compile(r'''^(?P<row>[012]).+(?P<column>[012])$''')
+    move_re = re.compile(r'''^(?P<row>[012]).*(?P<column>[012])$''')
     prompt = "What's your move? ('q' to quit) "
 
     def __init__(self, name, move_re=None, prompt=None):
+        """Create a new human tic tac toe player.
+
+        :param str name: the player's name
+        :param str move_re: a regular expression that matches a valid move
+        :param str prompt: the prompt text for a move
+        """
         super().__init__(name=name)
         self.move_re = move_re or self.move_re
         self.prompt = prompt or self.prompt
 
     def get_input(self):
+        """Get the player's move input.
+
+        :return: the raw move input from the player
+        :rtype: str
+        """
         return input(self.prompt)
 
-    def parse_move_input(self, response):
-        match = self.move_re.match(response)
+    def parse_move_input(self, move_input):
+        """Convert the raw move into an actual move.
+
+        :param str move_input: the raw move input from the user
+        :return: the actual move as row and column
+        :rtype: tuple
+        """
+        match = self.move_re.match(move_input)
         if match:
             row, column = match.group('row', 'column')
             return int(row), int(column)
-        raise zerosum.exceptions.InvalidMove(player=self, move=response)
+        raise zerosum.exceptions.InvalidMove(player=self, move=move_input)
 
-    def is_quit(self, move):
-        return move == 'q'
+    def is_quit(self, move_input):
+        """Return ``True`` if the move input represents "I quit."
+
+        :param str move_input: the raw move input
+        :return: whether the move input means that the player quits
+        :rtype: bool
+        """
+        return move_input == 'q'
 
 
 class AiPlayer(zerosum.base.AiPlayer):
