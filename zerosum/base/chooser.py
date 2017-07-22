@@ -1,10 +1,22 @@
 # -*- coding: utf-8 -*-
 """Strategy for choosing a move among those available."""
+import abc
 import itertools
 import random
 
 
 class Chooser:
+
+    @abc.abstractmethod
+    def get_min(self, scored_moves):
+        pass
+
+    @abc.abstractmethod
+    def get_max(self, scored_moves):
+        pass
+
+
+class Random(Chooser):
 
     def _get_score_filter(self, score):
         return lambda scored_move: scored_move[0] == score

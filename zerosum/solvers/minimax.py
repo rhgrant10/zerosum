@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
-import itertools
-
 import zerosum
 
 
 class Minimax(zerosum.base.Solver):
     def __init__(self, evaluator, chooser=None, max_depth=None):
         if chooser is None:
-            chooser = zerosum.base.Chooser()
+            chooser = zerosum.base.chooser.Random()
         super().__init__(evaluator=evaluator, chooser=chooser,
                          max_depth=max_depth)
 
