@@ -41,6 +41,22 @@ class Evaluation:
         self.score = score
         self.moves = moves
 
+    def __str__(self):
+        if self.is_win:
+            return '{} wins'.format(self.winner)
+        elif self.is_draw:
+            return "a draw"
+        else:
+            return '{} for the current player'.format(self.score)
+
+    def __repr__(self):
+        r = 'Evaluation(winner={!r}, is_final={!r}, score={!r})'
+        return r.format(self.winner, self.is_final, self.score)
+
+    def __bool__(self):
+        """True if the game is over."""
+        return self.is_final
+
     @property
     def is_final(self):
         """True if the game is over."""
@@ -55,19 +71,3 @@ class Evaluation:
     def is_draw(self):
         """True if the game is over but there is no winner."""
         return not self.is_win and self.is_final
-
-    def __bool__(self):
-        """True if the game is over."""
-        return self.is_final
-
-    def __str__(self):
-        if self.is_win:
-            return '{} wins'.format(self.winner)
-        elif self.is_draw:
-            return "a draw"
-        else:
-            return '{} for the current player'.format(self.score)
-
-    def __repr__(self):
-        r = 'Evaluation(winner={!r}, is_final={!r}, score={!r})'
-        return r.format(self.winner, self.is_final, self.score)

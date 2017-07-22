@@ -19,6 +19,9 @@ class Game:
         self.player = None
         self.history = [board]
 
+    def __repr__(self):
+        return 'Game(players={0.players!r}, board={0.board!r})'.format(self)
+
     @property
     def board(self):
         """The current board for the game."""
@@ -35,8 +38,9 @@ class Game:
                 winner = self.board.get_winner()
                 return self.players.get(winner, Game.DRAW)
 
-            # Now let the player take their turn.
             self.pre_turn_hook()
+
+            # Now let the player take their turn.
             board = None
             while not board:
                 try:
@@ -46,7 +50,10 @@ class Game:
                 except exceptions.IQuitError as e:
                     self.player_quit_hook(e)
                     return None
+
+            # Add the resulting board to the game history.
             self.history.append(board)
+
             self.post_turn_hook()
 
     def intro_hook(self):

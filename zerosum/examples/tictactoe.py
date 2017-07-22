@@ -7,8 +7,7 @@ import re
 import zerosum
 
 
-X, O = 'X', 'O'
-BLANK = ' '
+X, O, BLANK = 'XO '  # noqa
 
 
 class Board(zerosum.base.Board):
@@ -20,8 +19,13 @@ class Board(zerosum.base.Board):
     ]
 
     def __init__(self, players=None, squares=None):
+        """Create a new tic tac toe board, empty by default.
+
+        :param list players: two player pieces ('X' and 'O') in order of play
+        :param list squares: 3 lists of 3 peices that represent the board
+        """
         self.players = players or (X, O)
-        self.squares = squares or self.EMPTY.copy()
+        self.squares = squares or copy.deepcopy(self.EMPTY)
 
     @property
     def player(self):
@@ -56,6 +60,12 @@ class Board(zerosum.base.Board):
                     yield r, c
 
     def make_move(self, move):
+        """Make the given move on the board.
+
+        :param tuple move: the move to make
+        :return: a new board instance representing the resulting board
+        :rtype: :class:`~zerosum.base.Board`
+        """
         try:
             row, col = move
         except (ValueError, TypeError):
@@ -73,15 +83,30 @@ class Board(zerosum.base.Board):
         return self.__class__(squares=squares, players=players)
 
     def get_available_moves(self):
+        """Return all valid, available moves.
+
+        :return: available moves
+        :rtype: list
+        """
         return list(self.blanks) if not self.get_winner() else []
 
     def get_winner(self):
+        """Return the winning player if one exists.
+
+        :return: the winner or ``None``
+        :rtype: str
+        """
         for line in self.lines:
             uniques = tuple(set(line))
             if len(uniques) == 1 and BLANK not in uniques:
                 return uniques[0]
 
     def is_game_over(self):
+        """Return true if the game is over.
+
+        :return: whether the game is over
+        :rtype: bool
+        """
         return self.get_winner() or not self.get_available_moves()
 
     def __str__(self):
@@ -90,13 +115,27 @@ class Board(zerosum.base.Board):
 
 
 class SimpleEvaluator(zerosum.base.Evaluator):
-    prize = 10
 
-    def __init__(self, prize=None):
+    def __init__(self, prize=10):
+        """Create a simple board evaluator.
+
+        Although it does consider depth, this evaluator scores only final game
+        positions.
+
+        :param float prize: the prize for a winning board
+        """
         super().__init__()
-        self.prize = prize or self.prize
+        self.prize = prize
 
     def get_score(self, board, depth=0):
+        """Return the score for the given board at the given depth.
+
+        :param board: the board to score
+        :type board: :class:`~zerosum.base.Board`
+        :param int depth: the search depth at which this board was found
+        :return: the score of the board
+        :rtype: float
+        """
         winner = board.get_winner()
         if winner:
             color = 1 if winner == board.player else -1
@@ -108,9 +147,25 @@ class SmartEvaluator(zerosum.base.Evaluator):
     points = {0: 0, 1: 10, 2: 100, 3: 1000}
 
     def __init__(self, points=None):
+        """Create a new smart board evaluator.
+
+        This evaluator works by scoring the number of squares a player has on
+        each line. A line with both players on it is worth nothing to either
+        player.
+
+        :param dict points: a map of points to award for each line
+        """
         self.points = points or self.points
 
     def get_score(self, board, depth=0):
+        """Return the score for the given board at the given depth.
+
+        :param board: the board to score
+        :type board: :class:`~zerosum.base.Board`
+        :param int depth: the search depth at which this board was found
+        :return: the score of the board
+        :rtype: float
+        """
         score = 0
         for line in board.lines:
             pieces = collections.Counter(line)
