@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-import abc
 import itertools
 import collections
 
@@ -10,52 +9,57 @@ class Game:
     DRAW = 'draw'
 
     def __init__(self, players, board):
+        """A Zero Sum Game with players and a board.
+
+        :param list players: the (two) game players
+        :param board: the game board
+        :type board: :class:`zerosum.base.Board`
+        """
         self.players = collections.OrderedDict(zip(board.players, players))
-        self.boards = [board]
         self.player = None
+        self.history = [board]
 
     @property
     def board(self):
-        return self.boards[-1]
-    @board.setter
-    def board(self, board):
-        self.boards.append(board)
+        """The current board for the game."""
+        return self.history[-1]
 
     def play(self):
-        self.play_intro()
+        self.intro_hook()
         for player in itertools.cycle(self.players.values()):
+            # Let self.player always refer to the current player
             self.player = player
 
-            # First handle game over scenario.
+            # First handle the game over scenario.
             if self.board.is_game_over():
                 winner = self.board.get_winner()
                 return self.players.get(winner, Game.DRAW)
 
             # Now let the player take their turn.
-            self.play_pre_turn()
+            self.pre_turn_hook()
             board = None
             while not board:
                 try:
-                    board = player.take_turn(self.board)
+                    board = self.player.take_turn(self.board)
                 except exceptions.InvalidMove as e:
-                    self.play_invalid_move(e)
+                    self.invalid_move_hook(e)
                 except exceptions.IQuitError as e:
-                    self.play_quit(e)
+                    self.player_quit_hook(e)
                     return None
-            self.board = board
-            self.play_post_turn()
+            self.history.append(board)
+            self.post_turn_hook()
 
-    def play_invalid_move(self, e):
-        pass
+    def intro_hook(self):
+        """Perform any pre-game actions."""
 
-    def play_quit(self, e):
-        pass
+    def pre_turn_hook(self):
+        """Perform tasks just before a player takes a turn."""
 
-    def play_intro(self):
-        pass
+    def post_turn_hook(self):
+        """Perform tasks just after a player takes a turn."""
 
-    def play_pre_turn(self):
-        pass
+    def invalid_move_hook(self, e):
+        """Perform tasks when a player chooses an invalid move."""
 
-    def play_post_turn(self):
-        pass
+    def player_quit_hook(self, e):
+        """Perform tasks when a player chooses to quit."""

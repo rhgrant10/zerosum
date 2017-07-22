@@ -148,30 +148,34 @@ class AiPlayer(zerosum.base.AiPlayer):
 class SimplePlayer(AiPlayer):
     def __init__(self, max_depth=None):
         evaluator = SimpleEvaluator()
-        solver = zerosum.solvers.Minimax(evaluator=evaluator, max_depth=max_depth)
+        solver = zerosum.solvers.Minimax(evaluator=evaluator,
+                                         max_depth=max_depth)
         super().__init__(solver=solver)
 
 
 class SmartPlayer(AiPlayer):
     def __init__(self, max_depth=None):
         evaluator = SmartEvaluator()
-        solver = zerosum.solvers.Minimax(evaluator=evaluator, max_depth=max_depth)
+        solver = zerosum.solvers.Minimax(evaluator=evaluator,
+                                         max_depth=max_depth)
         super().__init__(solver=solver)
 
 
 class Game(zerosum.base.Game):
-    def play_intro(self):
-        print('\n{0} {1} vs {2} {0}\n'.format('~' * 10, * self.players.values()))
+    def intro_hook(self):
+        header = '\n{0} {1} vs {2} {0}\n'
+        banner = '~' * 10
+        print(header.format(banner, *self.players.values()))
         print(self.board)
 
-    def play_pre_turn(self):
+    def pre_turn_hook(self):
         print("{}, it's your turn.".format(self.player))
 
-    def play_post_turn(self):
+    def post_turn_hook(self):
         print(self.board)
 
-    def play_quit(self, e):
+    def player_quit_hook(self, e):
         print('Player {} quits!'.format(e.player))
 
-    def play_invalid_move(self, e):
+    def invalid_move_hook(self, e):
         print('{!r} is an invalid move yo... try again.'.format(e.move))
