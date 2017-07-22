@@ -56,7 +56,12 @@ class Board(zerosum.base.Board):
                     yield r, c
 
     def make_move(self, move):
-        row, col = move
+        try:
+            row, col = move
+        except (ValueError, TypeError):
+            message = "Can't decompose {!r} into a row and a column"
+            raise ValueError(message.format(move))
+
         piece = self.squares[row][col]
         if piece != BLANK:
             raise ValueError('Square {!r} already contains {!r}'
