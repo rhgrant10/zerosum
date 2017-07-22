@@ -64,12 +64,13 @@ class Board(zerosum.base.Board):
 
         piece = self.squares[row][col]
         if piece != BLANK:
-            raise ValueError('Square {!r} already contains {!r}'
-                             .format(move, piece))
-        after_move = copy.deepcopy(self.squares)
-        after_move[row][col] = self.player
-        switched = tuple(reversed(self.players))
-        return self.__class__(squares=after_move, players=switched)
+            message = 'Square {!r} already contains {!r}'
+            raise ValueError(message.format(move, piece))
+
+        squares = copy.deepcopy(self.squares)
+        squares[row][col] = self.player
+        players = tuple(reversed(self.players))
+        return self.__class__(squares=squares, players=players)
 
     def get_available_moves(self):
         return list(self.blanks) if not self.get_winner() else []
