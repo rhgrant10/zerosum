@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
+import collections
 import copy
 import itertools
-import collections
 import re
 
 import zerosum
@@ -228,24 +228,35 @@ class HumanPlayer(zerosum.base.HumanPlayer):
 
 
 class AiPlayer(zerosum.base.AiPlayer):
+    def __init__(self, evaluator, max_depth=None):
+        solver = zerosum.solvers.Negamax(evaluator=evaluator,
+                                         max_depth=max_depth)
+        super().__init__(solver=solver)
+
     def take_pre_turn(self, board):
         print('Thinking...')
 
 
 class SimplePlayer(AiPlayer):
+    """A player that uses the :class:`~SimpleEvaluator`."""
+
     def __init__(self, max_depth=None):
-        evaluator = SimpleEvaluator()
-        solver = zerosum.solvers.Minimax(evaluator=evaluator,
-                                         max_depth=max_depth)
-        super().__init__(solver=solver)
+        """CReate a new ``SimplePlayer``.
+
+        :param int max_depth: the maximum allowable solver depth
+        """
+        super().__init__(evaluator=SimpleEvaluator(), max_depth=max_depth)
 
 
 class SmartPlayer(AiPlayer):
+    """A player that uses the :class:`~SmartEvaluator`."""
+
     def __init__(self, max_depth=None):
-        evaluator = SmartEvaluator()
-        solver = zerosum.solvers.Minimax(evaluator=evaluator,
-                                         max_depth=max_depth)
-        super().__init__(solver=solver)
+        """CReate a new ``SmartPlayer``.
+
+        :param int max_depth: the maximum allowable solver depth
+        """
+        super().__init__(evaluator=SmartEvaluator(), max_depth=max_depth)
 
 
 class Game(zerosum.base.Game):
