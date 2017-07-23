@@ -229,8 +229,8 @@ class HumanPlayer(zerosum.base.HumanPlayer):
 
 class AiPlayer(zerosum.base.AiPlayer):
     def __init__(self, evaluator, max_depth=None):
-        solver = zerosum.solvers.Negamax(evaluator=evaluator,
-                                         max_depth=max_depth)
+        solver = zerosum.solvers.AlphaBeta(evaluator=evaluator,
+                                           max_depth=max_depth)
         super().__init__(solver=solver)
 
     def take_pre_turn(self, board):
