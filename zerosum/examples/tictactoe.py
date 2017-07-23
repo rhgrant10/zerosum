@@ -7,6 +7,9 @@ import re
 import zerosum
 
 
+__all__ = ['X', 'O', 'BLANK', 'Board', 'SimpleEvaluator', 'SmartEvaluator',
+           'HumanPlayer', 'SimplePlayer', 'SmartPlayer', 'Game']
+
 X, O, BLANK = 'XO '  # noqa
 
 
