@@ -32,31 +32,38 @@ class Board(zerosum.base.Board):
 
     @property
     def player(self):
+        """The current player."""
         return self.players[0]
 
     @property
     def opponent(self):
+        """The other player."""
         return self.players[1]
 
     @property
     def columns(self):
+        """All column lines."""
         yield from zip(*self.squares)
 
     @property
     def rows(self):
+        """All row lines."""
         yield from self.squares
 
     @property
     def diagonals(self):
+        """Both diagonal lines."""
         yield self.squares[0][0], self.squares[1][1], self.squares[2][2]
         yield self.squares[0][2], self.squares[1][1], self.squares[2][0]
 
     @property
     def lines(self):
+        """All lines."""
         yield from itertools.chain(self.rows, self.columns, self.diagonals)
 
     @property
     def blanks(self):
+        """All blank squares."""
         for r in range(3):
             for c in range(3):
                 if self.squares[r][c] == BLANK:
@@ -111,6 +118,13 @@ class Board(zerosum.base.Board):
         :rtype: bool
         """
         return self.get_winner() or not self.get_available_moves()
+
+    def __repr__(self):
+        winner = self.get_winner()
+        is_game_over = self.is_game_over()
+        num_moves = len(self.get_available_moves())
+        return ('Board(winner={!r}, is_game_over={!r}, moves={!r})'
+                .format(winner, is_game_over, num_moves))
 
     def __str__(self):
         rows = (' | '.join(row) for row in self.rows)

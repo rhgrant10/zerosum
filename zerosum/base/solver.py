@@ -4,6 +4,7 @@ import zerosum
 
 
 class Solver(metaclass=abc.ABCMeta):
+
     def __init__(self, evaluator, chooser=None, max_depth=None):
         self.evaluator = evaluator
         self.chooser = chooser or zerosum.base.chooser.Random()
@@ -11,7 +12,7 @@ class Solver(metaclass=abc.ABCMeta):
 
     def __repr__(self):
         return ('Solver(evaluator={0.evaluator!r}, chooser={0.chooser!r}, '
-                'max_depth={0.max_depth!r}'.format(self))
+                'max_depth={0.max_depth!r})'.format(self))
 
     def is_at_max_depth(self, depth):
         return self.max_depth and depth >= self.max_depth
