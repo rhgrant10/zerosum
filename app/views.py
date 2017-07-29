@@ -2,6 +2,7 @@
 from flask import jsonify
 from flask import request
 from flask import abort
+from flask import render_template
 
 from app import app
 from zerosum import solvers
@@ -23,15 +24,20 @@ evaluators_map = {
 
 
 @app.route('/')
-def index():
-    api_description = {
+def home():
+    return render_template('index.html')
+
+
+@app.route('/api/about')
+def api_description():
+    description = {
         '/api/search/': {
             'evaluators': list(evaluators_map),
             'solvers': list(solvers_map),
             'maxDepth': list(range(10)),
         }
     }
-    return jsonify(api_description)
+    return jsonify(description)
 
 
 @app.route('/api/search', methods=['POST'])
