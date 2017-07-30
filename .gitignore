@@ -60,4 +60,7 @@ target/
 
 # pyenv python configuration file
 .python-version
+
+# front end thingies
 node_modules/
+app/static/dist/
