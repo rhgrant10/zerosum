@@ -1,0 +1,36 @@
+{
+  "name": "zerosum",
+  "version": "0.1.0",
+  "description": "Zerosum algorithms and examples.",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs",
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/rhgrant10/zerosum.git"
+  },
+  "keywords": [
+    "zerosum",
+    "tictactoe",
+    "chess",
+    "minimax",
+    "alpha",
+    "beta"
+  ],
+  "author": "Robert Grant",
+  "license": "ISC",
+  "homepage": "https://bitbucket.org/rhgrant10/zerosum#readme",
+  "dependencies": {
+    "vue": "^2.4.2"
+  },
+  "devDependencies": {
+    "babelify": "^7.3.0",
+    "browserify": "^14.4.0"
+  }
+}
+
