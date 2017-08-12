@@ -36,5 +36,19 @@
     "browserify": "^14.4.0",
     "vueify": "^9.4.1"
   },
-  "browserify": { "transform": [ [ "babelify", { "presets": [ "es2015" ] } ], [ "vueify" ] ] }
+  "browserify": {
+    "transform": [
+      [
+        "vueify"
+      ],
+      [
+        "babelify",
+        {
+          "presets": [
+            "es2015"
+          ]
+        }
+      ]
+    ]
+  }
 }

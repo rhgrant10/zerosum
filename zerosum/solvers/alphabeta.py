@@ -7,6 +7,7 @@ import zerosum
 class AlphaBeta(zerosum.base.Solver):
 
     def search(self, board, alpha=-math.inf, beta=math.inf, depth=0):
+        print(board)
         evaluation = self.evaluator.evaluate(board)
         if evaluation.is_final or self.is_at_max_depth(depth):
             return evaluation.score, None
