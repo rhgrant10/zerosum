@@ -67,6 +67,10 @@
                         return line[0].piece
                     }
                 }
+
+                if (this.isFull) {
+                    this.board.forEach(cell => cell.isWinning = true)
+                }
             },
             isFull() {
                 return this.board.every(cell => !cell.isBlank)
