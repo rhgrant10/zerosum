@@ -1,7 +1,6 @@
 <template>
     <div>
         <p>
-            <h3>Board</h3>
             <button type="button" :disabled="isFresh" @click="reset" class="btn btn-sm btn-danger pull-right">
                 <small>Reset</small>
             </button>
