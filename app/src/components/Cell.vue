@@ -24,11 +24,10 @@
 				return this.size * this.cell.row
 			},
 			cellStyle() {
-				let style =  {'stroke-width': this.size / 20}
-				if (this.cell.isWinning) {
-					style['fill'] = 'slategrey'
+				return {
+					'stroke-width': this.size / 20,
+					'fill': this.cell.isWinning ? 'slategrey' : 'black'
 				}
-				return style
 			},
 			display() {
 				if (!this.isGameOver && this.cell.isBlank && this.showHint) {
@@ -50,8 +49,7 @@
 
 <style>
 	g > rect {
-		fill: black;
-		stroke: lightgrey;
+		stroke: grey;
 	}
 	g > text {
 		dominant-baseline: central;
