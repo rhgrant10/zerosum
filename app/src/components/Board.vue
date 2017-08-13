@@ -11,7 +11,7 @@
                 :cell="cell"
                 :size="cellSize"
                 :player="player"
-                :is-game-over="isGameOver"
+                :is-frozen="isGameOver || isAiMoving"
                 @move="makeMove">
             </board-cell>
         </svg>
@@ -31,7 +31,8 @@
                 board: [],
                 players: ['X', 'O'],
                 boardSize: 590,
-                aiPlayer: 'O'
+                aiPlayer: 'O',
+                isAiMoving: false
             }
         },
         computed: {
@@ -95,6 +96,9 @@
                 return !first.isBlank && cells.every(cell => cell.piece === first.piece)
             },
             makeMove(cell) {
+                if (this.isAiMoving) {
+                    return
+                }
                 let index = cell.row * 3 + cell.col
                 if (!this.board[index].isBlank) {
                     console.log(`The square ${cell.row}, ${cell.col} `
@@ -132,6 +136,7 @@
                 if (this.isGameOver) {
                     return
                 }
+                this.isAiMoving = true
                 console.log('Getting move...')
                 let rows = []
                 for (var index = 0; index < 3; index++) {
@@ -144,11 +149,9 @@
                 }
                 let vm = this
                 this.$http.post('/api/search', data).then(response => {
-                    console.log(response)
                     let result = response.body.result
-                    console.log(result)
-                    console.log('Got move:', result.move)
                     let index = result.move[0] * 3 + result.move[1]
+                    this.isAiMoving = false
                     vm.makeMove(vm.board[index])
                 })
             }

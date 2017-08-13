@@ -10,7 +10,7 @@
 
 <script>
 	export default {
-		props: ['cell', 'size', 'player', 'isGameOver'],
+		props: ['cell', 'size', 'player', 'isFrozen'],
 		data() {
 			return {
 				showHint: false
@@ -30,7 +30,7 @@
 				}
 			},
 			display() {
-				if (!this.isGameOver && this.cell.isBlank && this.showHint) {
+				if (!this.isFrozen && this.cell.isBlank && this.showHint) {
 					return this.player
 				} else {
 					return this.cell.piece
@@ -39,7 +39,7 @@
 		},
 		methods: {
 			move() {
-				if (!this.isGameOver && this.cell.isBlank) {
+				if (!this.isFrozen && this.cell.isBlank) {
 					this.$emit('move', this.cell)
 				}
 			}
