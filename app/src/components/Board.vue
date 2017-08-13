@@ -30,7 +30,8 @@
             return {
                 board: [],
                 players: ['X', 'O'],
-                boardSize: 590
+                boardSize: 590,
+                aiPlayer: 'O'
             }
         },
         computed: {
@@ -106,6 +107,9 @@
             switchPlayers() {
                 let players = [this.opponent, this.player]
                 this.players = players
+                if (this.player === this.aiPlayer) {
+                    this.$nextTick(this.getMove)
+                }
             },
             reset() {
                 this.players = ['X', 'O']
@@ -117,12 +121,36 @@
                             id: id++,
                             row,
                             col,
-                            piece: '',
+                            piece: ' ',
                             isBlank: true,
                             isWinning: false
                         })
                     }
                 }
+            },
+            getMove() {
+                if (this.isGameOver) {
+                    return
+                }
+                console.log('Getting move...')
+                let rows = []
+                for (var index = 0; index < 3; index++) {
+                    let row = this.board.filter(cell => cell.row === index).map(cell => cell.piece)
+                    rows.push(row)
+                }
+                let data = {
+                    board: rows,
+                    players: this.players
+                }
+                let vm = this
+                this.$http.post('/api/search', data).then(response => {
+                    console.log(response)
+                    let result = response.body.result
+                    console.log(result)
+                    console.log('Got move:', result.move)
+                    let index = result.move[0] * 3 + result.move[1]
+                    vm.makeMove(vm.board[index])
+                })
             }
         },
         mounted() {
